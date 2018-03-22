@@ -1,0 +1,17 @@
+{
+  "name": "login",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "Snehal Tayde <snehal@mediastic.in>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

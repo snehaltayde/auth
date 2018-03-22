@@ -1,0 +1,9 @@
+alert-danger{text-align: center;}
+#messages .success{
+background: red;
+color: white;
+}
+
+#messages li {
+  list-style: none;
+}
