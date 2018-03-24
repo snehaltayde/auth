@@ -9,7 +9,7 @@
 <% }) %>
 
 <% } %>
-<form class="form-control" action="/register" method="post">
+<form class="form-control" action="/register" enctype="multipart/form-data" method="post">
 <div class="form-group">
 <label class="form-control" for="">Name</label>
 <input type="text" name="name" class="form-control" value="">
@@ -25,6 +25,15 @@
 <input type="text" name="email" class="form-control" value="">
 </div>
 
+<div class="form-group">
+<label class="form-control" for="">Profile Image</label>
+<input type="file" name="profileimage" class="form-control" value="">
+</div>
+
+<div class="form-group">
+    <label class="form-control" for="">Profile Image</label>
+<texearea name ="editor1" > </texearea>
+    </div>
 
 <div class="form-group">
 <label class="form-control" for="">Password</label>
@@ -41,4 +50,4 @@
 Have an Account? <a href="/login">Login</a>
 </form>
 
-<% include ../views/partials/header %>
+<% include ../views/partials/footer %>

@@ -3,19 +3,33 @@ var router = express();
 var User = require('../models/users');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + '.jpg' )
+  }
+});
+const upload = multer({storage: storage});
+const fs = require('fs');
 
-
+//Index Route
 router.get('/', ensureAuthenticated,(req,res,next) => {
   res.render('index',{
     title: 'Index'
-  });
+      });
 });
 
+
+//Register get Route
 router.get('/register', (req,res,next) => {
   res.render('register',{
     title: 'Register'
   });
 });
+
 
 //Process login
 router.get('/login',(req,res,next)=> {
@@ -24,52 +38,68 @@ router.get('/login',(req,res,next)=> {
   });
 });
 
-//Logout
-router.get('/logout', (req,res,next)=> {
-req.logout();
-req.flash('success', 'You are Logged Out');
-res.redirect('/login');
+
+//Logout Route
+  router.get('/logout', (req,res,next)=> {
+  req.logout();
+  req.flash('success', 'You are Logged Out');
+  res.redirect('/login');
 });
 
+
 //Process Register
-router.post('/register', (req,res,next) => {
-const name = req.body.name;
-const email = req.body.email;
-const username = req.body.username;
-const password = req.body.password;
-const password2 = req.body.password2;
+router.post('/register',upload.single('profileimage'), (req,res,next) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const username = req.body.username;
+  const password = req.body.password;
+  const password2 = req.body.password2;
 
-req.checkBody('name', 'Name field is required').notEmpty();
-req.checkBody('email', 'Email is incorrect').isEmail();
-req.checkBody('email', 'email field is required').notEmpty();
-req.checkBody('username', 'username field is required').notEmpty();
-req.checkBody('password', 'password field is required').notEmpty();
-req.checkBody('password2', 'password doesnt match').equals(req.body.password);
+  if(req.file){
 
-let errors = req.validationErrors();
+    console.log('file Uploading', req.file);
+    var profileimage = req.file.filename;
+    console.log(profileimage);
 
-  if(errors){
-    res.render('register', {
-    title: "Register",
-    errors: errors
-  });
+  } else {
+
+    console.log('Not Uploaded');
+    var profileimage = 'noimage.jpg';
+
   }
-  else{
-    const user = new User({
-      name: name,
-      username: username,
-      email: email,
-      password: password
-    });
 
-  User.registerUser(user, (err, user)=> {
-    if(err){
-      console.log(err);
-    }
-    req.flash('success', 'Registration Successfull, You Can Login');
-    res.redirect('/login');
-  })
-  }
+    req.checkBody('name', 'Name field is required').notEmpty();
+    req.checkBody('email', 'Email is incorrect').isEmail();
+    req.checkBody('email', 'email field is required').notEmpty();
+    req.checkBody('username', 'username field is required').notEmpty();
+    req.checkBody('password', 'password field is required').notEmpty();
+    req.checkBody('password2', 'password doesnt match').equals(req.body.password);
+
+    let errors = req.validationErrors();
+
+      if(errors){
+        res.render('register', {
+        title: "Register",
+        errors: errors
+      });
+      }
+      else{
+        const user = new User({
+          name: name,
+          username: username,
+          email: email,
+          profileimage: profileimage,
+          password: password
+        });
+
+      User.registerUser(user, (err, user)=> {
+        if(err){
+          console.log(err);
+        }
+        req.flash('success', 'Registration Successfull, You Can Login');
+        res.redirect('/login');
+      })
+      }
 });
 
 //Passport Local Strategy

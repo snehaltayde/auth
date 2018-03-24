@@ -17,6 +17,9 @@ username: {
 email: {
   type: String
 },
+profileimage: {
+  type: String
+},
 password: {
   type: String
 },
